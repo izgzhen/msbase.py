@@ -3,11 +3,41 @@ import os
 import sys
 import glob
 from os.path import join
+import time
+import logging
+from multiprocessing import Pool, Value
+import time
+from termcolor import cprint
+
+'''Levels:
+DEBUG
+INFO
+WARN
+ERROR
+CRITICAL
+'''
+
+logger = logging.getLogger()
+handler = logging.StreamHandler()
+formatter = logging.Formatter(
+    '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+def timed(func):
+    def function_wrapper(*args, **kwargs):
+        now = time.time()
+        ret = func(*args, **kwargs)
+        logger.debug("%s(%s, %s) spent %.2fs" %
+                     (func.__qualname__, args, kwargs, time.time() - now))
+        return ret
+    return function_wrapper
 
 def call_std(args, cwd=None, env=None, output=True):
     if output:
         p = subprocess.Popen(args, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, cwd=cwd, env=env)
+                             stderr=subprocess.PIPE, cwd=cwd, env=env)
         stdout, stderr = p.communicate()
         return_code = p.wait()
         return (return_code, str(stdout, "utf-8"), str(stderr, "utf-8"))
@@ -15,11 +45,13 @@ def call_std(args, cwd=None, env=None, output=True):
         code = subprocess.call(args, cwd=cwd, env=env)
         return (code, None, None)
 
-def try_call_std(args, cwd=None, env=None, verbose=True, output=True):
+@timed
+def try_call_std(args, cwd=None, env=None, verbose=True,
+                 output=True, noexception=False):
     if verbose:
         cprint("+ " + " ".join(args), "blue")
     code, stdout, stderr = call_std(args, cwd, env, output)
-    if code != 0:
+    if not noexception and code != 0:
         if verbose:
             print("STDOUT: ")
             print(stdout)
@@ -27,10 +59,7 @@ def try_call_std(args, cwd=None, env=None, verbose=True, output=True):
             cprint(stderr, "red")
         raise Exception("calling " + " ".join(args) + " failed")
     else:
-        return stdout, stderr
-
-from multiprocessing import Pool, Value
-import time
+        return stdout, stderr, code
 
 def multiprocess(task, inputs, n: int, verbose=True, return_dict=True):
     counter = Value('i', 0)
@@ -56,3 +85,4 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True):
             return dict(zip(inputs, results))
         else:
             return results
+

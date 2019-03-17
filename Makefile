@@ -8,3 +8,6 @@ tar:
 
 publish:
 	twine upload dist/*
+
+test:
+	python3 test.py 1
