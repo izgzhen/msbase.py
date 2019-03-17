@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="msbase",
-    version="0.0.1",
+    version="0.0.2",
     author="Zhen Zhang",
-    author_email="hi@monad.systems",
-    description="Monad-Systems Base Library for Python",
+    # author_email="",
+    description="Base Library for Python for MySelf",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/monad-systems/base.py",
+    url="https://github.com/izgzhen/msbase.py",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
