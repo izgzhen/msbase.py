@@ -13,7 +13,7 @@ assert_le(1, 2, "1 > 2")
 from msbase.subprocess_ import *
 
 print(call_std(["ls", "unknown"]))
-print(try_call_std(["ls", "."], cwd="/tmp"))
+assert try_call_std(["./foo"]) == ("standard\n", "error\n", 0)
 
 def task(i):
     return i + 1

@@ -8,6 +8,8 @@ import logging
 from multiprocessing import Pool, Value
 import time
 from termcolor import cprint
+from threading import Thread
+from queue import Queue, Empty
 
 '''Levels:
 DEBUG
@@ -34,13 +36,62 @@ def timed(func):
         return ret
     return function_wrapper
 
+ON_POSIX = 'posix' in sys.builtin_module_names
+
+def enqueue_output(out, queue):
+    for line in iter(out.readline, b''):
+        queue.put(line)
+    out.close()
+
 def call_std(args, cwd=None, env=None, output=True):
     if output:
         p = subprocess.Popen(args, stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, cwd=cwd, env=env)
-        stdout, stderr = p.communicate()
-        return_code = p.wait()
-        return (return_code, str(stdout, "utf-8"), str(stderr, "utf-8"))
+                             stderr=subprocess.PIPE, bufsize=1,
+                             close_fds=ON_POSIX, cwd=cwd, env=env)
+        stdout = ""
+        q_stdout = Queue()
+        t_stdout = Thread(target=enqueue_output, args=(p.stdout, q_stdout))
+        t_stdout.daemon = True
+        t_stdout.start()
+        stderr = ""
+        q_stderr = Queue()
+        t_stderr = Thread(target=enqueue_output, args=(p.stderr, q_stderr))
+        t_stderr.daemon = True
+        t_stderr.start()
+        while True:
+            return_code = p.poll()
+            if return_code is not None:
+                break
+            try:
+                stdout_line = str(q_stdout.get_nowait(), "utf-8")
+            except Empty:
+                stdout_line = ''
+            try:
+                stderr_line = str(q_stderr.get_nowait(), "utf-8")
+            except Empty:
+                stderr_line = ''
+            if stdout_line:
+                stdout += stdout_line
+                logger.info(stdout_line.rstrip())
+            if stderr_line:
+                stderr += stderr_line
+                logger.warning(stderr_line.rstrip())
+        while True:
+            try:
+                stdout_line = str(q_stdout.get_nowait(), "utf-8")
+            except Empty:
+                break
+            stdout += stdout_line
+            logger.info(stdout_line.rstrip())
+        while True:
+            try:
+                stderr_line = str(q_stderr.get_nowait(), "utf-8")
+            except Empty:
+                break
+            stderr += stderr_line
+            logger.warning(stderr_line.rstrip())
+
+        return (return_code, stdout, stderr)
     else:
         code = subprocess.call(args, cwd=cwd, env=env)
         return (code, None, None)
