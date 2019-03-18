@@ -14,3 +14,21 @@ tqdm==4.31.1
 twine==1.13.0
 urllib3==1.24.1
 webencodings==0.5.1
+bleach==3.1.0
+certifi==2019.3.9
+chardet==3.0.4
+docutils==0.14
+idna==2.8
+jsonlines==1.2.0
+-e git+git@github.com:izgzhen/msbase.py@adf6605531410ce88c07035eac86fbcf5cb5d34f#egg=msbase
+pkginfo==1.5.0.1
+Pygments==2.3.1
+readme-renderer==24.0
+requests==2.21.0
+requests-toolbelt==0.9.1
+six==1.12.0
+termcolor==1.1.0
+tqdm==4.31.1
+twine==1.13.0
+urllib3==1.24.1
+webencodings==0.5.1
