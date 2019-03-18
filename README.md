@@ -4,5 +4,5 @@ Convenient wrappers and utilities, minimal third-party dependencies, written in 
 
 Examples:
 
-- [`example/ping_google.py`](example/ping_google.py)
+- [`examples/ping_google.py`](examples/ping_google.py)
 - [`test.py`](test.py)
