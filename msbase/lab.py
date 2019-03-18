@@ -48,7 +48,7 @@ class AbstractLab(ABC):
                                       env=dict(step.env, **config))
                 seconds_spent = time.time() - start_seconds
                 stat = {"step_name": step.name, "seconds": seconds_spent,
-                        "output": output}
+                        "output": output, "command": step.command }
                 stat = dict(self.digest_output(step.name, output), **stat)
                 stat = dict(config, **stat)
                 self.log(stat)
