@@ -24,7 +24,9 @@ print(multiprocess(task, [1, 2, 3], n = 2))
 from msbase.lab import Step, AbstractLab, to_matrix
 
 config1 = { "A": ["A1", "A2" ], "B": ["B1", "B2"] }
-print(to_matrix(config1))
+assert len(to_matrix(config1)) == 4
+
+assert len(to_matrix({})) == 1
 
 step1 = Step("mysleep1", ["./mysleep", "1"],
              configurations={ "A": ["A1", "A2" ], "B": ["B1", "B2"] })

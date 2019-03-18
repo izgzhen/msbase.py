@@ -1,14 +1,19 @@
 .phony: tar publish
 
 # https://packaging.python.org/tutorials/packaging-projects/
+#
+
+PIP:=.venv/bin/pip
+PYTHON:=.venv/bin/python
+TWINE:=.venv/bin/twine
 
 tar:
 	rm -rf dist
-	pip install --upgrade setuptools wheel
-	python3 setup.py sdist bdist_wheel
+	$(PIP) install --upgrade setuptools wheel
+	$(PYTHON) setup.py sdist bdist_wheel
 
 publish:
-	twine upload dist/*
+	$(TWINE) upload dist/*
 
 test:
-	python3 test.py 1
+	$(PYTHON) test.py 1

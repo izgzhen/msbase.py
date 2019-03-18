@@ -6,14 +6,14 @@ from msbase.utils import append_pretty_json, datetime_str
 
 def to_matrix_internal(config_pairs):
     if not len(config_pairs):
-        return []
+        return [{}]
     key, values = config_pairs[0]
     configs = []
     tail_configs = to_matrix_internal(config_pairs[1:])
     for v in values:
         if not tail_configs:
             configs.append([(key, v)])
-        configs.extend([dict([(key, v)] + config) for config in tail_configs])
+        configs.extend([dict(config, key=v) for config in tail_configs])
     return configs
 
 def to_matrix(configs):
