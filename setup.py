@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="msbase",
-    version="0.0.8",
+    version="0.0.9",
     author="Zhen Zhang",
     # author_email="",
     description="Base Library for Python for MySelf",
