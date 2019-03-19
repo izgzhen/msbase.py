@@ -83,5 +83,5 @@ class AbstractLab(ABC):
 
         print(tabulate(table, headers="firstrow", tablefmt="github"))
 
-        tex_result = tabulate(table, headers="firstrow", tablefmt="latex")
+        tex_result = tabulate(table, headers="firstrow", tablefmt="latex_raw")
         open("results.tex", "w").write(tex_result)
