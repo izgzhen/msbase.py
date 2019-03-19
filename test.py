@@ -35,7 +35,10 @@ step2 = Step("mysleep2", ["./mysleep", "2"],
 
 class MyLab(AbstractLab):
     def digest_output(self, name: str, output):
-        return {}
+        return { "STDOUT length": len(output[0]) }
+
+    def digest_column_names(self):
+        return [ "STDOUT length"]
 
 lab = MyLab("mylab", [step1, step2])
 lab.run()
@@ -44,4 +47,6 @@ import os
 f = [f for f in os.listdir(".") if f.endswith(".log")][0]
 from msbase.utils import load_jsonl
 assert len(load_jsonl(f)) == 8
+lab.analyze()
 os.remove(f)
+os.remove('results.tex')

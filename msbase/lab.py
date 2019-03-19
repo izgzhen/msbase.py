@@ -1,8 +1,13 @@
 import time
+import glob
+
 from abc import ABC, abstractmethod
 from typing import List
+from tabulate import tabulate
+
 from msbase.subprocess_ import try_call_std
 from msbase.utils import append_pretty_json, datetime_str
+from msbase.utils import load_jsonl
 
 def to_matrix_internal(config_pairs):
     if not len(config_pairs):
@@ -36,6 +41,10 @@ class AbstractLab(ABC):
     def digest_output(self, name: str, output):
         raise NotImplementedError
 
+    @abstractmethod
+    def digest_column_names(self):
+        raise NotImplementedError
+
     def log(self, content):
         append_pretty_json(content, path=self.session_id + ".log")
 
@@ -49,6 +58,30 @@ class AbstractLab(ABC):
                 seconds_spent = time.time() - start_seconds
                 stat = {"step_name": step.name, "seconds": seconds_spent,
                         "output": output, "command": step.command }
-                stat = dict(self.digest_output(step.name, output), **stat)
                 stat = dict(config, **stat)
                 self.log(stat)
+
+    def analyze(self):
+        table = [["Step", "Time spent (seconds)"] + self.digest_column_names()]
+
+        for f in sorted(glob.glob("run-%s-*.log" % self.name)):
+            print("importing %s" % f)
+            for log in load_jsonl(f):
+                row = []
+                row.append(log['step_name'])
+                row.append(log['seconds'])
+                digest = self.digest_output(log['step_name'], log['output'])
+                for col in self.digest_column_names():
+                    row.append(digest[col])
+                table.append(row)
+                print('STDOUT')
+                print(log['output'][0])
+                print('STDERR')
+                print(log['output'][1])
+                print('CODE')
+                print(log['output'][2])
+
+        print(tabulate(table, headers="firstrow", tablefmt="github"))
+
+        tex_result = tabulate(table, headers="firstrow", tablefmt="latex")
+        open("results.tex", "w").write(tex_result)
