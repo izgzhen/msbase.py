@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 from msbase.subprocess_ import try_call_std
 from msbase.utils import append_pretty_json, datetime_str
-from msbase.utils import load_jsonl
+from msbase.utils import load_jsonl, write_pretty_json
 
 def to_matrix_internal(config_pairs):
     if not len(config_pairs):
@@ -38,7 +38,7 @@ class AbstractLab(ABC):
         self.steps = steps
 
     @abstractmethod
-    def digest_output(self, name: str, output):
+    def digest_output(self, name: str, output, command):
         raise NotImplementedError
 
     @abstractmethod
@@ -70,7 +70,7 @@ class AbstractLab(ABC):
                 row = []
                 row.append(log['step_name'])
                 row.append(log['seconds'])
-                digest = self.digest_output(log['step_name'], log['output'])
+                digest = self.digest_output(log['step_name'], log['output'], log["command"])
                 for col in self.digest_column_names():
                     row.append(digest[col])
                 table.append(row)
@@ -85,3 +85,5 @@ class AbstractLab(ABC):
 
         tex_result = tabulate(table, headers="firstrow", tablefmt="latex_raw")
         open("results.tex", "w").write(tex_result)
+
+        write_pretty_json(table, "results.json")
