@@ -62,7 +62,7 @@ class AbstractLab(ABC):
                 self.log(stat)
 
     def analyze(self):
-        table = [["Step", "Time spent (seconds)"] + self.digest_column_names()]
+        table = [["Step", "Runtime (s)"] + self.digest_column_names()]
 
         for f in sorted(glob.glob("run-%s-*.log" % self.name)):
             print("importing %s" % f)
