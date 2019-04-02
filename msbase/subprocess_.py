@@ -108,7 +108,7 @@ def try_call_std(args, cwd=None, env={}, verbose=True,
             print(stdout)
             print("STDERR: ")
             cprint(stderr, "red")
-        raise Exception("calling " + " ".join(args) + " failed")
+        raise Exception(str(code) + ": calling " + " ".join(args) + " failed")
     else:
         return stdout, stderr, code
 

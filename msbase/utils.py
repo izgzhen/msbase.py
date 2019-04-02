@@ -1,6 +1,7 @@
 import json
 import jsonlines
 import time
+import os
 
 def load_json(path: str):
     return json.load(open(path, "r"))
@@ -19,3 +20,9 @@ def datetime_str():
 def load_jsonl(path: str):
     with jsonlines.open(path) as reader:
         return [obj for obj in reader]
+
+def file_size(path: str):
+    return os.stat(path).st_size
+
+def file_size_mb(path: str):
+    return file_size(path) / 1024.0  / 1024.0
