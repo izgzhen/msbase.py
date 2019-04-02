@@ -1,4 +1,5 @@
 import logging
+import os
 
 # https://docs.python.org/3/library/logging.html#logrecord-attributes
 
@@ -15,7 +16,7 @@ if os.getenv("PYLOG") is not None:
 logger = logging.getLogger()
 handler = logging.StreamHandler()
 formatter = logging.Formatter(
-    '%(asctime)s %(funcname)-12s %(levelname)-8s %(message)s')
+    '%(asctime)s %(funcName)-12s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.setLevel(PYLOG)

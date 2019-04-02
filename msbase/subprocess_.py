@@ -4,28 +4,13 @@ import sys
 import glob
 from os.path import join
 import time
-import logging
 from multiprocessing import Pool, Value
 import time
 from termcolor import cprint
 from threading import Thread
 from queue import Queue, Empty
 
-'''Levels:
-DEBUG
-INFO
-WARN
-ERROR
-CRITICAL
-'''
-
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    '%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+from msbase.logging import logger
 
 def timed(func):
     def function_wrapper(*args, **kwargs):
