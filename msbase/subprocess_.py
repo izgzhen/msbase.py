@@ -97,7 +97,7 @@ def try_call_std(args, cwd=None, env={}, verbose=True,
     else:
         return stdout, stderr, code
 
-def multiprocess(task, inputs, n: int, verbose=True, return_dict=True):
+def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False):
     counter = Value('i', 0)
     total = float(len(inputs))
     start_time = time.time()
@@ -117,6 +117,13 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True):
         results = p.map(run, inputs)
         if verbose:
             print("total spent time: %f" % (time.time() - start_time))
+        if throws:
+            ret = []
+            for ok, r in results:
+                if not ok:
+                    raise Exception(str(r))
+                ret.append(r)
+            return ret
         if return_dict:
             return dict(zip(inputs, results))
         else:
