@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+import traceback
 import glob
 from os.path import join
 import time
@@ -111,7 +112,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
         try:
             return (True, task(input))
         except Exception as e:
-            return (False, e)
+            return (False, "%s\n%s" % (e, traceback.format_exc()))
 
     with Pool(n) as p:
         results = p.map(run, inputs)
