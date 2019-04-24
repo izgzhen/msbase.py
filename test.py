@@ -28,10 +28,8 @@ assert len(to_matrix(config1)) == 4
 
 assert len(to_matrix({})) == 1
 
-step1 = Step("mysleep1", ["./mysleep", "1"],
-             configurations={ "A": ["A1", "A2" ], "B": ["B1", "B2"] })
-step2 = Step("mysleep2", ["./mysleep", "2"],
-             configurations={ "A": ["A3", "A4" ], "B": ["B3", "B4"] })
+step1 = Step("mysleep1", ["./mysleep", "1"])
+step2 = Step("mysleep2", ["./mysleep", "2"])
 
 class MyLab(AbstractLab):
     def digest_output(self, name: str, output, command):
@@ -40,13 +38,14 @@ class MyLab(AbstractLab):
     def digest_column_names(self):
         return [ "STDOUT length"]
 
-lab = MyLab("mylab", [step1, step2])
+lab = MyLab("mylab", [step1, step2],
+            configurations={ "A": ["A1", "A2" ], "B": ["B1", "B2"] })
 lab.run()
 
 import os
 f = [f for f in os.listdir(".") if f.endswith(".log")][0]
 from msbase.utils import load_jsonl
-assert len(load_jsonl(f)) == 8
+assert_eq(len(load_jsonl(f)), 8)
 lab.analyze()
 os.remove(f)
 os.remove('results.tex')

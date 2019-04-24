@@ -25,15 +25,15 @@ def to_matrix(configs):
     return to_matrix_internal(list(configs.items()))
 
 class Step(object):
-    def __init__(self, name: str, command: List[str], cwd:str=None, env={}, configurations={}):
+    def __init__(self, name: str, command: List[str], cwd:str=None, env={}):
         self.name = name
         self.command = command
-        self.config_matrix = to_matrix(configurations)
         self.cwd = cwd
         self.env = env
 
 class AbstractLab(ABC):
-    def __init__(self, name: str, steps: List[Step]):
+    def __init__(self, name: str, steps: List[Step], configurations={}):
+        self.config_matrix = to_matrix(configurations)
         self.name  = name
         self.steps = steps
 
@@ -55,18 +55,25 @@ class AbstractLab(ABC):
     def log(self, content):
         append_pretty_json(content, path=self.session_id + ".log")
 
+    def run_with_config(self, config):
+        for step in self.steps:
+            start_seconds = time.time()
+            output = try_call_std(step.command, cwd=step.cwd,
+                                  env=dict(step.env, **config),
+                                  noexception=True)
+            _, _, return_code = output
+            seconds_spent = time.time() - start_seconds
+            stat = {"step_name": step.name, "seconds": seconds_spent,
+                    "output": output, "command": step.command }
+            stat = dict(config, **stat)
+            self.log(stat)
+            if return_code != 0:
+                return
+
     def run(self):
         self.session_id = "run-%s-%s" % (self.name, datetime_str())
-        for step in self.steps:
-            for config in step.config_matrix:
-                start_seconds = time.time()
-                output = try_call_std(step.command, cwd=step.cwd,
-                                      env=dict(step.env, **config))
-                seconds_spent = time.time() - start_seconds
-                stat = {"step_name": step.name, "seconds": seconds_spent,
-                        "output": output, "command": step.command }
-                stat = dict(config, **stat)
-                self.log(stat)
+        for config in self.config_matrix:
+            self.run_with_config(config)
 
     def analyze(self):
         table = [["Step", "Runtime (s)"] + self.digest_column_names()]
