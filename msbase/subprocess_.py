@@ -17,7 +17,7 @@ def timed(func):
     def function_wrapper(*args, **kwargs):
         now = time.time()
         ret = func(*args, **kwargs)
-        logger.debug("%s(%s, %s) spent %.2fs" %
+        logger.info("%s(%s, %s) spent %.2fs" %
                      (func.__qualname__, args, kwargs, time.time() - now))
         return ret
     return function_wrapper
@@ -107,7 +107,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
     def run(input):
         with counter.get_lock():
             if verbose:
-                print("%fs - progress: %f" % (time.time() - start_time, counter.value / total))
+                logger.info("%fs - progress: %f" % (time.time() - start_time, counter.value / total))
             counter.value += 1
         try:
             return (True, task(input))
@@ -117,7 +117,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
     with Pool(n) as p:
         results = p.map(run, inputs)
         if verbose:
-            print("total spent time: %f" % (time.time() - start_time))
+            logger.info("total spent time: %f" % (time.time() - start_time))
         if throws:
             ret = []
             for ok, r in results:
