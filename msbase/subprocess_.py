@@ -85,6 +85,9 @@ def call_std(args, cwd=None, env={}, output=True):
 @timed
 def try_call_std(args, cwd=None, env={}, verbose=True,
                  output=True, noexception=False):
+    '''An asynchronously logged process executor
+    that returns essential information all you need
+    '''
     if verbose:
         cprint("+ " + " ".join(args), "blue")
     code, stdout, stderr = call_std(args, cwd, env, output)

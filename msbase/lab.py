@@ -38,11 +38,18 @@ class AbstractLab(ABC):
         self.steps = steps
 
     @abstractmethod
-    def digest_output(self, name: str, output, command):
+    def digest_output(self, name: str, output, command: List[str]):
+        '''digest the step name,
+        the command output (stdout: str, stderr: str, return_code: int),
+        the command sequence.
+
+        return a dictionary indexed by columns as in digest_column_names
+        '''
         raise NotImplementedError
 
     @abstractmethod
     def digest_column_names(self):
+        '''defines the output of digest_output'''
         raise NotImplementedError
 
     def log(self, content):
