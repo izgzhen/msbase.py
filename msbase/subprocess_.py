@@ -5,6 +5,7 @@ import traceback
 import glob
 from os.path import join
 from multiprocessing import Pool, Value
+import multiprocessing
 import time
 from termcolor import cprint
 from threading import Thread
@@ -108,6 +109,18 @@ def try_call_std(args, cwd=None, env={}, verbose=True,
         raise Exception(str(code) + ": calling " + " ".join(args) + " failed")
     else:
         return stdout, stderr, code
+
+def multiprocess_async(task, inputs, n: int, callback, timeout_s: int):
+    with Pool(n) as p:
+        handlers = []
+        for arg in inputs:
+            handlers.append((arg, p.apply_async(task, (arg,), callback=callback)))
+        start_time = time.time()
+        while True:
+            if time.time() - start_time > timeout_s:
+                raise TimeoutError()
+        p.close()
+        p.join()
 
 def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False):
     counter = Value('i', 0)
