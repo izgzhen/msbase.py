@@ -4,7 +4,6 @@ import sys
 import traceback
 import glob
 from os.path import join
-import time
 from multiprocessing import Pool, Value
 import time
 from termcolor import cprint
@@ -29,11 +28,12 @@ def enqueue_output(out, queue):
         queue.put(line)
     out.close()
 
-def call_std(args, cwd=None, env={}, output=True):
+def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
     if output:
         p = subprocess.Popen(args, stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE, bufsize=1,
                              close_fds=ON_POSIX, cwd=cwd, env=dict(os.environ, **env))
+        start_time = time.time()
         stdout = ""
         q_stdout = Queue()
         t_stdout = Thread(target=enqueue_output, args=(p.stdout, q_stdout))
@@ -62,6 +62,9 @@ def call_std(args, cwd=None, env={}, output=True):
             if stderr_line:
                 stderr += stderr_line
                 logger.warning(stderr_line.rstrip())
+            if timeout_s is not None and time.time() - start_time > timeout_s:
+                p.kill()
+                return (-1, "", "TIMEOUT!")
         while True:
             try:
                 stdout_line = str(q_stdout.get(timeout=.1), "utf-8")
@@ -69,6 +72,9 @@ def call_std(args, cwd=None, env={}, output=True):
                 break
             stdout += stdout_line
             logger.info(stdout_line.rstrip())
+            if timeout_s is not None and time.time() - start_time > timeout_s:
+                p.kill()
+                return (-1, "", "TIMEOUT!")
         while True:
             try:
                 stderr_line = str(q_stderr.get(timeout=.1), "utf-8")
@@ -76,21 +82,23 @@ def call_std(args, cwd=None, env={}, output=True):
                 break
             stderr += stderr_line
             logger.warning(stderr_line.rstrip())
-
+            if timeout_s is not None and time.time() - start_time > timeout_s:
+                p.kill()
+                return (-1, "", "TIMEOUT!")
         return (return_code, stdout, stderr)
     else:
-        code = subprocess.call(args, cwd=cwd, env=dict(os.environ, **env))
+        code = subprocess.call(args, cwd=cwd, env=dict(os.environ, **env), timeout=timeout_s)
         return (code, None, None)
 
 @timed
 def try_call_std(args, cwd=None, env={}, verbose=True,
-                 output=True, noexception=False):
+                 output=True, noexception=False, timeout_s=None):
     '''An asynchronously logged process executor
     that returns essential information all you need
     '''
     if verbose:
         cprint("+ " + " ".join(args), "blue")
-    code, stdout, stderr = call_std(args, cwd, env, output)
+    code, stdout, stderr = call_std(args, cwd, env, output, timeout_s=timeout_s)
     if not noexception and code != 0:
         if verbose:
             print("STDOUT: ")
