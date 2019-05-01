@@ -110,19 +110,18 @@ def try_call_std(args, cwd=None, env={}, verbose=True,
     else:
         return stdout, stderr, code
 
-def multiprocess_async(task, inputs, n: int, callback, timeout_s: int):
-    with Pool(n) as p:
-        handlers = []
+def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False, debug_mode=False):
+    '''How to use this effectively:
+    1. Use debug_mode=True to switch to tracked for-loop
+    '''
+    if debug_mode:
+        results = []
         for arg in inputs:
-            handlers.append((arg, p.apply_async(task, (arg,), callback=callback)))
-        start_time = time.time()
-        while True:
-            if time.time() - start_time > timeout_s:
-                raise TimeoutError()
-        p.close()
-        p.join()
-
-def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False):
+            start_time = time.time()
+            logger.info("Working on %s" % arg)
+            results.append(task(arg))
+            logger.info("Time spent: %.2f" % (time.time() - start_time))
+        return results
     counter = Value('i', 0)
     total = float(len(inputs))
     start_time = time.time()

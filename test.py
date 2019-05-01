@@ -12,20 +12,6 @@ assert_le(1, 2, "1 > 2")
 
 from msbase.subprocess_ import *
 
-def consumer(i):
-    print("consumer(%s)" % i)
-    time.sleep(i)
-    return i
-
-def callback(i):
-    print("callback(%s)" % i)
-    return i
-
-try:
-    multiprocess_async(consumer, [1, 2, 3, 4], 2, callback, timeout_s=3)
-except TimeoutError as e:
-    print(e)
-
 print(call_std(["ls", "unknown"]))
 ret = try_call_std(["./foo"])
 assert ret == ("standard\n", "error\n", 0), ret
@@ -34,6 +20,7 @@ def task(i):
     return i + 1
 
 print(multiprocess(task, [1, 2, 3], n = 2))
+print(multiprocess(task, [1, 2, 3], n = 2, debug_mode=True))
 
 from msbase.lab import Step, AbstractLab, to_matrix
 
