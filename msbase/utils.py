@@ -6,6 +6,10 @@ import os
 def load_json(path: str):
     return json.load(open(path, "r"))
 
+def write_json(stuff, path: str):
+    with open(path, 'w') as f:
+        f.write(json.dumps(stuff))
+
 def write_pretty_json(stuff, path: str):
     with open(path, 'w') as f:
         f.write(json.dumps(stuff, indent=4, sort_keys=True))
