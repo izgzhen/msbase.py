@@ -8,7 +8,7 @@ def load_json(path: str):
 
 def write_json(stuff, path: str):
     with open(path, 'w') as f:
-        f.write(json.dumps(stuff))
+        f.write(json.dumps(stuff, sort_keys=True))
 
 def write_pretty_json(stuff, path: str):
     with open(path, 'w') as f:
@@ -30,3 +30,15 @@ def file_size(path: str):
 
 def file_size_mb(path: str):
     return file_size(path) / 1024.0  / 1024.0
+
+def find_files(dirpath, file_ext=None, dir_ext=None):
+    for root, dirs, files in os.walk(dirpath, followlinks=True):
+        if file_ext:
+            for f in files:
+                if f.endswith(file_ext):
+                     yield os.path.join(root, f)
+        if dir_ext:
+            for d in dirs:
+                if d.endswith(dir_ext):
+                     yield os.path.join(root, d)
+
