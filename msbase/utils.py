@@ -4,7 +4,8 @@ import time
 import os
 
 def load_json(path: str):
-    return json.load(open(path, "r"))
+    with open(path, "r") as f:
+        return json.load(f)
 
 def write_json(stuff, path: str):
     with open(path, 'w') as f:
