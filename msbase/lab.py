@@ -9,6 +9,38 @@ from msbase.subprocess_ import try_call_std
 from msbase.utils import append_pretty_json, datetime_str
 from msbase.utils import load_jsonl, write_pretty_json
 
+class Spec(ABC):
+    skip_if_exist = None
+
+    @staticmethod
+    @abstractmethod
+    def get_output(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def impl(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def run(self, *args, **kwargs):
+        spec_output = self.get_output(*args, **kwargs)
+        outputs = []
+        if isinstance(spec_output, list):
+            for f in spec_output:
+                outputs.append(f)
+        else:
+            outputs.append(spec_output)
+
+        if self.skip_if_exist and all([os.path.exists(f) for f in outputs ]):
+            return
+
+        ret = self.impl(*args, **kwargs)
+
+        assert all([os.path.exists(f) for f in outputs ])
+        return ret
+
+    def run_output(self, *args, **kwargs):
+        self.run(*args, **kwargs)
+        return self.get_output(*args, **kwargs)
+
 def to_matrix_internal(config_pairs):
     if not len(config_pairs):
         return [{}]
