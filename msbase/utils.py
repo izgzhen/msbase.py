@@ -43,3 +43,5 @@ def find_files(dirpath, file_ext=None, dir_ext=None):
                 if d.endswith(dir_ext):
                      yield os.path.join(root, d)
 
+def unzip(ijs):
+    return [ i for i, j in ijs ], [ j for i, j in ijs ]
