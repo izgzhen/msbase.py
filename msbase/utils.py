@@ -5,7 +5,11 @@ import os
 
 def load_json(path: str):
     with open(path, "r") as f:
-        return json.load(f)
+        s = f.read()
+        try:
+            return json.loads(s)
+        except json.decoder.JSONDecodeError:
+            return json.loads(s.encode().decode('utf-8-sig'))
 
 def write_json(stuff, path: str):
     with open(path, 'w') as f:

@@ -9,7 +9,7 @@ logging_levels = { "DEBUG" : logging.DEBUG
                  , "ERROR" : logging.ERROR
                  , "CRITICAL" : logging.CRITICAL }
 
-PYLOG = logging.WARN
+PYLOG = logging.INFO
 if os.getenv("PYLOG") is not None:
     PYLOG = logging_levels[os.getenv("PYLOG")]
 
