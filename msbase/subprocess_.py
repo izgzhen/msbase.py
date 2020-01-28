@@ -91,22 +91,23 @@ def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
         code = subprocess.call(args, cwd=cwd, env=dict(os.environ, **env), timeout=timeout_s)
         return (code, None, None)
 
+class CallStdException(Exception):
+    def __init__(self, code, stdout, stderr):
+        super().__init__("%s\n%s\n%s" % (code, stdout, stderr))
+        self.code = code
+        self.stdout = stdout
+        self.stderr = stderr
+
 @timed
-def try_call_std(args, cwd=None, env={}, verbose=True,
-                 output=True, noexception=False, timeout_s=None):
+def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexception=False, timeout_s=None):
     '''An asynchronously logged process executor
     that returns essential information all you need
     '''
-    if verbose:
+    if print_cmd:
         cprint("+ " + " ".join(args), "blue")
     code, stdout, stderr = call_std(args, cwd, env, output, timeout_s=timeout_s)
     if not noexception and code != 0:
-        if verbose:
-            print("STDOUT: ")
-            print(stdout)
-            print("STDERR: ")
-            cprint(stderr, "red")
-        raise Exception(str(code) + ": calling " + " ".join(args) + " failed")
+        raise Exception(CallStdException(code, stdout, stderr))
     else:
         return stdout, stderr, code
 
