@@ -88,8 +88,10 @@ def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
                 return (-1, "", "TIMEOUT!")
         return (return_code, stdout, stderr)
     else:
-        code = subprocess.call(args, cwd=cwd, env=dict(os.environ, **env), timeout=timeout_s)
-        return (code, None, None)
+        proc = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, env=dict(os.environ, **env), timeout=timeout_s)
+        code = proc.wait()
+        return (code, proc.stdout, proc.stderr)
 
 class CallStdException(Exception):
     def __init__(self, code, stdout, stderr):

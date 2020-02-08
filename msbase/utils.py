@@ -49,3 +49,8 @@ def find_files(dirpath, file_ext=None, dir_ext=None):
 
 def unzip(ijs):
     return [ i for i, j in ijs ], [ j for i, j in ijs ]
+
+def sha256sum(apk_path):
+    stdout, _, _ = try_call_std(["sha256sum", apk_path])
+    return stdout.split()[0].strip()
+
