@@ -54,3 +54,6 @@ def sha256sum(apk_path):
     stdout, _, _ = try_call_std(["sha256sum", apk_path])
     return stdout.split()[0].strip()
 
+def readlines(f: str):
+    with open(f, "r") as fh:
+        return [ l.strip() for l in fh.readlines() ]

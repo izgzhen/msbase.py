@@ -156,3 +156,15 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
         else:
             return results
 
+def report_call_std(args, timeout_s):
+    report = {}
+    report["status"] = "finished"
+    report["timeout_s"] = timeout_s
+    try:
+        stdout, stderr, ret = try_call_std(args, output=False, noexception=True, timeout_s=timeout_s)
+        report["stdout"] = stdout
+        report["stderr"] = stderr
+        report["returncode"] = ret
+    except subprocess.TimeoutExpired as e:
+        report["status"] = "timeout"
+    return report
