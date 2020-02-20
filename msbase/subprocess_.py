@@ -91,7 +91,7 @@ def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
         proc = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE, env=dict(os.environ, **env))
         code = proc.wait(timeout=timeout_s)
-        return (code, proc.stdout, proc.stderr)
+        return (code, str(proc.stdout.read(), "utf-8"), str(proc.stderr.read(), "utf-8"))
 
 class CallStdException(Exception):
     def __init__(self, code, stdout, stderr):

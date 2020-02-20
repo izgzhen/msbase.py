@@ -1,9 +1,17 @@
+import json
+
 import msbase.argparse_ as argparse
 
 p = argparse.p()
 p.add_argument('integers', type=int, help='just some integers')
 args = p.parse_args()
 print(args.integers)
+
+
+from msbase.subprocess_ import report_call_std
+
+report = report_call_std(["ls", "."], timeout_s=1)
+print(json.dumps(report))
 
 from msbase.assert_ import *
 
