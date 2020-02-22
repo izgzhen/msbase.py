@@ -141,7 +141,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
             return (False, "%s\n%s" % (e, traceback.format_exc()))
 
     with Pool(n) as p:
-        results = p.map(run, inputs)
+        results = p.map(run, inputs) # type: ignore
         if verbose:
             logger.info("total spent time: %f" % (time.time() - start_time))
         if throws:
