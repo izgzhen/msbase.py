@@ -29,5 +29,4 @@ requests-toolbelt==0.9.1
 six==1.12.0
 termcolor==1.1.0
 tqdm==4.31.1
-twine==1.13.0
 webencodings==0.5.1

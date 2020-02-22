@@ -1,4 +1,6 @@
 import json
+import os
+os.system("rm *.log")
 
 import msbase.argparse_ as argparse
 
@@ -62,3 +64,7 @@ os.remove('results.tex')
 from msbase.logging import logger
 
 logger.warn("bye!")
+
+from msbase.utils import sha256sum
+
+print(sha256sum("test.py"))

@@ -3,6 +3,8 @@ import jsonlines
 import time
 import os
 
+from msbase.subprocess_ import try_call_std
+
 def load_json(path: str):
     with open(path, "r") as f:
         s = f.read()

@@ -106,7 +106,7 @@ def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexceptio
     that returns essential information all you need
     '''
     if print_cmd:
-        cprint("+ " + " ".join("%s=%s" % (k, v) for k, v in env) + " " + " ".join(args), "blue")
+        cprint("+ " + " ".join("%s=%s" % (k, v) for k, v in env.items()) + " " + " ".join(args), "blue")
     code, stdout, stderr = call_std(args, cwd, env, output, timeout_s=timeout_s)
     if not noexception and code != 0:
         raise Exception(CallStdException(code, stdout, stderr))
