@@ -31,4 +31,5 @@ jobs:
         mypy --ignore-missing-imports msbase/*.py
     - name: Test
       run: |
+        pip install -e .
         python test.py

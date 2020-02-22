@@ -20,7 +20,6 @@ chardet==3.0.4
 docutils==0.14
 idna==2.8
 jsonlines==1.2.0
--e git+git@github.com:izgzhen/msbase.py@adf6605531410ce88c07035eac86fbcf5cb5d34f#egg=msbase
 pkginfo==1.5.0.1
 Pygments==2.3.1
 readme-renderer==24.0
