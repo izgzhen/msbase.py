@@ -1,6 +1,5 @@
 import json
 import os
-os.system("rm *.log")
 
 import msbase.argparse_ as argparse
 
