@@ -30,4 +30,4 @@ jobs:
     - name: Test
       run: |
         pip install -e .
-        python test.py
+        python test.py 1
