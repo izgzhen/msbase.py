@@ -59,3 +59,9 @@ def sha256sum(apk_path):
 def readlines(f: str):
     with open(f, "r") as fh:
         return [ l.strip() for l in fh.readlines() ]
+
+def getenv(k):
+    v = os.getenv(k)
+    print(k + "=" + v)
+    assert v
+    return v
