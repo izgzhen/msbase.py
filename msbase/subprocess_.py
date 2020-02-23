@@ -107,11 +107,16 @@ def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexceptio
     '''
     if print_cmd:
         cprint("+ " + " ".join("%s=%s" % (k, v) for k, v in env.items()) + " " + " ".join(args), "blue")
-    code, stdout, stderr = call_std(args, cwd, env, output, timeout_s=timeout_s)
-    if not noexception and code != 0:
-        raise Exception(CallStdException(code, stdout, stderr))
-    else:
-        return stdout, stderr, code
+    try:
+        code, stdout, stderr = call_std(args, cwd, env, output, timeout_s=timeout_s)
+    except Exception as e:
+        if noexception:
+            return None, str(e), 1
+        else:
+            raise e
+    if code != 0 and not noexception:
+        raise CallStdException(code, stdout, stderr)
+    return stdout, stderr, code
 
 def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False, debug_mode=False):
     '''How to use this effectively:
