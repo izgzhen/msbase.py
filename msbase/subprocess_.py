@@ -90,17 +90,8 @@ def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
     else:
         proc = subprocess.Popen(args, cwd=cwd, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE, env=dict(os.environ, **env))
-        # Popen.wait will deadlock when using stdout=PIPE or stderr=PIPE and the
-        # child process generates enough output to a pipe such that it blocks
-        # waiting for the OS pipe buffer to accept more data. Use
-        # Popen.communicate() when using pipes to avoid that.
-        try:
-            outs, errs = proc.communicate(timeout=timeout_s)
-            return (proc.returncode, str(outs, "utf-8"), str(errs, "utf-8"))
-        except subprocess.TimeoutExpired as e:
-            proc.kill()
-            outs, errs = proc.communicate()
-            return (1, str(outs, "utf-8"), str(e) + "\n" + str(errs, "utf-8"))
+        outs, errs = proc.communicate(timeout=timeout_s)
+        return (proc.returncode, str(outs, "utf-8"), str(errs, "utf-8"))
 
 class CallStdException(Exception):
     def __init__(self, code, stdout, stderr):
