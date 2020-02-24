@@ -100,7 +100,6 @@ class CallStdException(Exception):
         self.stdout = stdout
         self.stderr = stderr
 
-@timed
 def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexception=False, timeout_s=None):
     '''An asynchronously logged process executor
     that returns essential information all you need

@@ -62,6 +62,6 @@ def readlines(f: str):
 
 def getenv(k):
     v = os.getenv(k)
-    print(k + "=" + v)
     assert v
+    print(k + "=" + v)
     return v
