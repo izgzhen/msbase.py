@@ -60,8 +60,10 @@ def readlines(f: str):
     with open(f, "r") as fh:
         return [ l.strip() for l in fh.readlines() ]
 
-def getenv(k):
+def getenv(k, default=None):
     v = os.getenv(k)
+    if v is None and default is not None:
+        v = default
     assert v
     print(k + "=" + v)
     return v
