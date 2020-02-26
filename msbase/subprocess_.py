@@ -137,7 +137,14 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
     def run(input):
         with counter.get_lock():
             if verbose:
-                logger.info("%fs - progress: %f" % (time.time() - start_time, counter.value / total))
+                spent = time.time() - start_time
+                finished = counter.value / total
+                if counter.value > 0:
+                    est = (spent / counter.value) * (total - counter.value)
+                else:
+                    est = 0
+                logger.info("spent: %.3fs - progress: %.3f - est. remaining: %.3f" %
+                    (spent, finished, est))
             counter.value += 1
         try:
             return (True, task(input))

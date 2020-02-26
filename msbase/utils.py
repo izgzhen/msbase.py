@@ -23,14 +23,14 @@ def write_pretty_json(stuff, path: str):
 
 def append_pretty_json(stuff, path: str):
     with jsonlines.open(path, mode='a') as f:
-        f.write(stuff)
+        f.write(stuff) # pylint: disable=no-member
 
 def datetime_str():
     return time.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 def load_jsonl(path: str):
     with jsonlines.open(path) as reader:
-        return [obj for obj in reader]
+        return [obj for obj in reader] # pylint: disable=not-an-iterable
 
 def file_size(path: str):
     return os.stat(path).st_size

@@ -7,6 +7,11 @@ PIP:=.venv/bin/pip
 PYTHON:=.venv/bin/python
 TWINE:=.venv/bin/twine
 
+PYFILES := $(shell find msbase -name "*.py") test.py
+
+check:
+	ck $(PYFILES)
+
 tar:
 	rm -rf dist
 	$(PIP) install --upgrade setuptools wheel
@@ -15,5 +20,5 @@ tar:
 publish:
 	$(TWINE) upload dist/*
 
-test:
+test: check
 	$(PYTHON) test.py 1
