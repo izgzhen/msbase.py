@@ -3,6 +3,8 @@ import jsonlines
 import time
 import os
 
+from typing import List
+
 from msbase.subprocess_ import try_call_std
 
 def load_json(path: str):
@@ -59,6 +61,14 @@ def sha256sum(apk_path):
 def readlines(f: str):
     with open(f, "r") as fh:
         return [ l.strip() for l in fh.readlines() ]
+
+def writelines(lines: List[str], f: str):
+    with open(f, "w") as fh:
+        fh.write("\n".join(lines))
+
+def appendline(line: str, f: str):
+    with open(f, "a") as fh:
+        fh.write(line.strip() + "\n")
 
 def getenv(k, default=None):
     v = os.getenv(k)
