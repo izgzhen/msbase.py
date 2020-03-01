@@ -143,7 +143,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
                     est = (spent / counter.value) * (total - counter.value)
                 else:
                     est = 0
-                logger.info("spent: %.3fs - progress: %.3f - est. remaining: %.3f" %
+                logger.info("spent: %.3fs - progress: %.3f - est. remaining: %.3fs" %
                     (spent, finished, est))
             counter.value += 1
         try:

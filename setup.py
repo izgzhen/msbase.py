@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 setuptools.setup(
     name="msbase",
-    version="0.2.5",
+    version="0.2.6",
     author="Zhen Zhang",
     author_email="pip@zhen-zhang.com",
     description="Base Library for Python for MySelf",
@@ -15,6 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/izgzhen/msbase.py",
     packages=setuptools.find_packages(),
+    scripts=["scripts/ck"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
