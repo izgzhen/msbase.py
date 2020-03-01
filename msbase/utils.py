@@ -55,7 +55,7 @@ def unzip(ijs):
     return [ i for i, j in ijs ], [ j for i, j in ijs ]
 
 def sha256sum(apk_path):
-    stdout, _, _ = try_call_std(["sha256sum", apk_path], print=False, output=False)
+    stdout, _, _ = try_call_std(["sha256sum", apk_path], print_cmd=False, output=False)
     return stdout.split()[0].strip()
 
 def readlines(f: str):
