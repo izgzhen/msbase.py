@@ -17,7 +17,7 @@ tar:
 	$(PIP) install --upgrade setuptools wheel
 	$(PYTHON) setup.py sdist bdist_wheel
 
-publish:
+publish: tar
 	$(TWINE) upload dist/*
 
 test: check
