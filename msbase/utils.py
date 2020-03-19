@@ -75,5 +75,5 @@ def getenv(k, default=None):
     if v is None and default is not None:
         v = default
     assert v
-    print(k + "=" + v)
+    print("%s=%s" % (k, v))
     return v
