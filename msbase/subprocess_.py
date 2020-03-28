@@ -125,7 +125,7 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
         results = []
         for arg in inputs:
             start_time = time.time()
-            logger.info("Working on %s" % arg)
+            logger.info("Working on " + str(arg))
             results.append(task(arg))
             logger.info("Time spent: %.2f" % (time.time() - start_time))
         return results
