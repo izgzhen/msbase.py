@@ -1,4 +1,5 @@
 import json
+import sys
 import jsonlines
 import time
 import os
@@ -70,10 +71,13 @@ def appendline(line: str, f: str):
     with open(f, "a") as fh:
         fh.write(line.strip() + "\n")
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
 def getenv(k, default=None):
     v = os.getenv(k)
     if v is None and default is not None:
         v = default
     assert v
-    print("%s=%s" % (k, v))
+    eprint("%s=%s" % (k, v))
     return v
