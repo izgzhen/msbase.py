@@ -1,6 +1,14 @@
 import json
 import os
 
+from msbase.utils import log_progress
+
+for i in log_progress(list(range(0, 10))):
+    print(i)
+
+for i in log_progress(list(range(0, 10)), desc="desc", print_item=True):
+    print(i)
+
 import msbase.argparse_ as argparse
 
 p = argparse.p()

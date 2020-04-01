@@ -4,7 +4,7 @@ import jsonlines
 import time
 import os
 
-from typing import List
+from typing import List, Any
 
 from msbase.subprocess_ import try_call_std
 
@@ -81,3 +81,14 @@ def getenv(k, default=None):
     assert v
     eprint("%s=%s" % (k, v))
     return v
+
+def log_progress(l: List[Any], desc=None, print_item=False):
+    total = len(l)
+    for i, item in enumerate(l):
+        info = ""
+        if desc:
+            info += " " + desc
+        if print_item:
+            info += " " + str(item)
+        print(f"Progress: item {i}" + info)
+        yield item
