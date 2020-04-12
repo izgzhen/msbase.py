@@ -103,6 +103,8 @@ class CallStdException(Exception):
 def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexception=False, timeout_s=None):
     '''An asynchronously logged process executor
     that returns essential information all you need
+
+    return: stdout, stderr, code
     '''
     if print_cmd:
         cprint("+ " + " ".join('%s="%s"' % (k, v) for k, v in env.items()) + " " + " ".join(args), "blue")
@@ -117,10 +119,13 @@ def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexceptio
         raise CallStdException(code, stdout, stderr)
     return stdout, stderr, code
 
-def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False, debug_mode=False):
+def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False, debug_mode=False, map_like=False):
     '''How to use this effectively:
     1. Use debug_mode=True to switch to tracked for-loop
     '''
+    if map_like:
+        throws = True
+        return_dict = False
     if debug_mode:
         results = []
         for arg in inputs:

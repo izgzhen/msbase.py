@@ -90,5 +90,5 @@ def log_progress(l: List[Any], desc=None, print_item=False):
             info += " " + desc
         if print_item:
             info += " " + str(item)
-        print(f"Progress: item {i}/{total}" + info)
+        print(f"Progress: {i}/{total}" + info, flush=True)
         yield item
