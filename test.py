@@ -1,6 +1,10 @@
 import json
 import os
 
+from msbase.utils import load_yaml, write_yaml
+
+write_yaml(load_yaml("test.yaml"), "test.yaml")
+
 from msbase.utils import log_progress
 
 for i in log_progress(list(range(0, 10))):
