@@ -17,13 +17,27 @@ def load_json(path: str):
         except json.decoder.JSONDecodeError:
             return json.loads(s.encode().decode('utf-8-sig'))
 
-def write_json(stuff, path: str):
-    with open(path, 'w') as f:
-        f.write(json.dumps(stuff, sort_keys=True))
+def np_encoder():
+    import numpy as np # pylint: disable=import-error
+    class NpEncoder(json.JSONEncoder):
+        def default(self, obj): # pylint: disable=method-hidden
+            if isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return super(NpEncoder, self).default(obj)
+    return NpEncoder
 
-def write_pretty_json(stuff, path: str):
+def write_json(stuff, path: str, encoder_cls=None):
     with open(path, 'w') as f:
-        f.write(json.dumps(stuff, indent=4, sort_keys=True))
+        f.write(json.dumps(stuff, sort_keys=True, cls=encoder_cls))
+
+def write_pretty_json(stuff, path: str, encoder_cls=None):
+    with open(path, 'w') as f:
+        f.write(json.dumps(stuff, indent=4, sort_keys=True, cls=encoder_cls))
 
 def append_pretty_json(stuff, path: str):
     with jsonlines.open(path, mode='a') as f:
