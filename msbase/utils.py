@@ -115,3 +115,11 @@ def load_yaml(path: str):
 def write_yaml(stuff, path: str):
     with open(path, 'w') as f:
         yaml.safe_dump(stuff, f, default_flow_style=False, sort_keys=False)
+
+def compare_lines(f1: str, f2: str):
+    l1 = set(readlines(f1))
+    l2 = set(readlines(f2))
+    l12 = l1.intersection(l2)
+    print("%s: %s" % (f1, len(l1))
+    print("%s: %s" % (f2, len(l2))
+    print("%s: %s" % ("intersection", len(l12))

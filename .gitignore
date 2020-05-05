@@ -8,3 +8,4 @@ build
 results.json
 .vscode
 *.log
+*.pyc
