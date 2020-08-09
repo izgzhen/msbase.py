@@ -7,6 +7,7 @@ import time
 
 from msbase.logging import logger
 from msbase.utils import datetime_str, getenv
+from path import Path # pip install path
 
 def prepare_insert_query(row_dict, table, ignore_dup = False):
     row_items = list(row_dict.items())
@@ -63,7 +64,6 @@ class DB(object):
         return self.exec_fetch(query, args, mode="all", return_dict=return_dict)
 
     def upgrade(self):
-        from path import Path # pip install path
         SCHEMA_DIR = getenv("SCHEMA_DIR")
 
         max_version = "1000"
