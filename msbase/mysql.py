@@ -36,7 +36,7 @@ class DB(object):
         return self.db_
 
     def exec(self, query, args=()):
-        with self.db() as cur:
+        with self.db().cursor() as cur:
             logger.info(query % args)
             cur.execute(query, args)
         self.commit()
