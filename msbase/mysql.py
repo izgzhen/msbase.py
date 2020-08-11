@@ -36,12 +36,14 @@ class DB(object):
         return self.db_
 
     def exec(self, query, args=()):
+        self.db().ping(reconnect=True)
         with self.db().cursor() as cur:
             logger.info(query % args)
             cur.execute(query, args)
         self.commit()
 
     def exec_fetch(self, query, args=(), mode=str, return_dict=False, do_commit=True):
+        self.db().ping(reconnect=True)
         assert mode in ["one", "all"]
         if return_dict:
             cur = self.db().cursor(pymysql.cursors.DictCursor)
@@ -98,6 +100,7 @@ class DB(object):
         self.exec(query, values)
 
     def insert_row_get_id(self, row_dict, table):
+        self.db().ping(reconnect=True)
         cur = self.db().cursor()
         query, values = prepare_insert_query(row_dict, table)
         logger.info(query)
