@@ -4,4 +4,4 @@ import sys
 from msbase.utils import load_yaml
 import json
 
-print(json.dumps(load_yaml(sys.argv[1])))
+print(json.dumps(load_yaml(sys.argv[1]), sort_keys=True))

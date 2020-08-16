@@ -5,4 +5,4 @@ from msbase.utils import write_yaml
 import json
 
 data = json.load(sys.stdin)
-print(write_yaml(data))
+print(write_yaml(data, sort_keys=True))
