@@ -113,7 +113,9 @@ def load_yaml(path: str):
     with open(path, 'r') as f:
         return yaml.safe_load(f)
 
-def write_yaml(stuff, path: str):
+def write_yaml(stuff, path: str = None):
+    if path is None:
+        return yaml.safe_dump(stuff, default_flow_style=False, sort_keys=False)
     with open(path, 'w') as f:
         yaml.safe_dump(stuff, f, default_flow_style=False, sort_keys=False)
 
