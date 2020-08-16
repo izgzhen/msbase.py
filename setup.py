@@ -15,7 +15,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/izgzhen/msbase.py",
     packages=setuptools.find_packages(),
-    scripts=["scripts/ck", "scripts/yl", "scripts/y2j"],
+    scripts=["scripts/ck", "scripts/j2y", "scripts/yl", "scripts/y2j"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
