@@ -10,6 +10,15 @@ from typing import List, Any
 
 from msbase.subprocess_ import try_call_std
 
+def read_nproc():
+    if os.getenv("NPROC"):
+        return int(os.getenv("NPROC"))
+    # https://stackoverflow.com/questions/1006289/how-to-find-out-the-number-of-cpus-using-python
+    workers = os.cpu_count()
+    if 'sched_getaffinity' in dir(os):
+        workers = len(os.sched_getaffinity(0)) # pylint: disable=no-member
+    return workers
+
 def load_json(path: str):
     with open(path, "r") as f:
         s = f.read()

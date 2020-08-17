@@ -166,7 +166,10 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
                 if not ok:
                     raise Exception(str(r))
                 ret.append(r)
-            return ret
+            if return_dict:
+                return dict(zip(inputs, ret))
+            else:
+                return ret
         if return_dict:
             return dict(zip(inputs, results))
         else:
