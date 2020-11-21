@@ -6,6 +6,5 @@ dist
 build
 *.swp
 results.json
-.vscode
 *.log
 *.pyc

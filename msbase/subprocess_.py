@@ -119,6 +119,25 @@ def try_call_std(args, cwd=None, env={}, print_cmd=True, output=True, noexceptio
         raise CallStdException(code, stdout, stderr)
     return stdout, stderr, code
 
+counter = Value('i', 0)
+def run(inputs):
+    input, verbose, start_time, total, task = inputs
+    with counter.get_lock():
+        if verbose:
+            spent = time.time() - start_time
+            finished = counter.value / total
+            if counter.value > 0:
+                est = (spent / counter.value) * (total - counter.value)
+            else:
+                est = 0
+            logger.info("spent: %.3fs - progress: %.3f - est. remaining: %.3fs" %
+                (spent, finished, est))
+        counter.value += 1
+    try:
+        return (True, task(input))
+    except Exception as e:
+        return (False, "%s\n%s" % (e, traceback.format_exc()))
+
 def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=False, debug_mode=False, map_like=False):
     '''How to use this effectively:
     1. Use debug_mode=True to switch to tracked for-loop
@@ -134,30 +153,13 @@ def multiprocess(task, inputs, n: int, verbose=True, return_dict=True, throws=Fa
             results.append(task(arg))
             logger.info("Time spent: %.2f" % (time.time() - start_time))
         return results
-    counter = Value('i', 0)
     total = float(len(inputs))
     start_time = time.time()
 
-    global run
-    def run(input):
-        with counter.get_lock():
-            if verbose:
-                spent = time.time() - start_time
-                finished = counter.value / total
-                if counter.value > 0:
-                    est = (spent / counter.value) * (total - counter.value)
-                else:
-                    est = 0
-                logger.info("spent: %.3fs - progress: %.3f - est. remaining: %.3fs" %
-                    (spent, finished, est))
-            counter.value += 1
-        try:
-            return (True, task(input))
-        except Exception as e:
-            return (False, "%s\n%s" % (e, traceback.format_exc()))
+    counter.value = 0
 
     with Pool(n) as p:
-        results = p.map(run, inputs) # type: ignore
+        results = p.map(run, [(i, verbose, start_time, total, task) for i in inputs]) # type: ignore
         if verbose:
             logger.info("total spent time: %f" % (time.time() - start_time))
         if throws:

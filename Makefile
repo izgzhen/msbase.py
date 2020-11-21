@@ -22,3 +22,6 @@ publish: tar
 
 test: check
 	$(PYTHON) test.py 1
+
+venv:
+	python3 -m venv .venv

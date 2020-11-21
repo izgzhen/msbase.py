@@ -5,7 +5,9 @@
 import sys
 import glob
 import subprocess
-from typing import Dict
+
+import pickle
+import hashlib #instead of md5
 
 from msbase.utils import read_nproc
 from msbase.subprocess_ import multiprocess
@@ -24,19 +26,6 @@ checks = {
     "pylint": lambda f: ["pylint", "-E", f]
 }
 
-
-checked = []
-failed = []
-unknowns = []
-
-import pickle
-import hashlib #instead of md5
-try:
-    l = pickle.load(open("/tmp/ckdb", "rb"))
-except IOError:
-    l = []
-db = dict(l)
-
 def is_py(f: str):
     if f.endswith(".py"):
         return True
@@ -47,41 +36,54 @@ def is_py(f: str):
                 return True
     return False
 
-files_to_check = []
-
-for pat in sys.argv[1:]:
-    for f in glob.glob(pat):
-        checksum = hashlib.md5(open(f).read().encode('utf-8')).hexdigest()
-        if db.get(f, None) == checksum:
-            logger.info(f + " is not modified")
-            continue
-        if is_py(f):
-            files_to_check.append(f)
-        else:
-            unknowns.append(f)
-
-for f in unknowns:
-    logger.warn("[ck] ❓ Ignoring unknown extension: " + f)
-
 def process(f):
-    return all(run(check(f)) for name, check in checks.items())
+    return all(run(check(f)) for check in checks.values())
 
-results = multiprocess(process, files_to_check, n=NPROC, return_dict=True, throws=True, verbose=False)
+if __name__ == "__main__":
+    files_to_check = []
 
-for f, ok in results.items():
-    if ok:
-        checked.append(f)
-        db[f] = checksum
-    else:
-        failed.append(f)
+    checked = []
+    failed = []
+    unknowns = []
 
-for f in checked:
-    logger.info("[ck] ✅ Checked: " + f)
+    try:
+        l = pickle.load(open("/tmp/ckdb", "rb"))
+    except IOError:
+        l = []
+    db = dict(l)
 
-for f in failed:
-    logger.error("[ck] ❌ Failed: " + f)
+    checksum = None
 
-pickle.dump(list(db.items()), open("/tmp/ckdb", "wb"))
+    for pat in sys.argv[1:]:
+        for f in glob.glob(pat):
+            checksum = hashlib.md5(open(f).read().encode('utf-8')).hexdigest()
+            if db.get(f, None) == checksum:
+                logger.info(f + " is not modified")
+                continue
+            if is_py(f):
+                files_to_check.append(f)
+            else:
+                unknowns.append(f)
 
-if len(failed):
-    exit(-1)
+    for f in unknowns:
+        logger.warn("[ck] ❓ Ignoring unknown extension: " + f)
+
+    results = multiprocess(process, files_to_check, n=NPROC, return_dict=True, throws=True, verbose=False)
+
+    for f, ok in results.items():
+        if ok:
+            checked.append(f)
+            db[f] = checksum
+        else:
+            failed.append(f)
+
+    for f in checked:
+        logger.info("[ck] ✅ Checked: " + f)
+
+    for f in failed:
+        logger.error("[ck] ❌ Failed: " + f)
+
+    pickle.dump(list(db.items()), open("/tmp/ckdb", "wb"))
+
+    if len(failed):
+        exit(-1)
