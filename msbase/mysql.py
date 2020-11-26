@@ -1,13 +1,11 @@
-import yaml
 import glob
 import os
-import pymysql # pip install pymysql
+import pymysql # pip install pymysql # pylint: disable=import-error
 import json
-import time
 
 from msbase.logging import logger
-from msbase.utils import datetime_str, getenv
-from path import Path # pip install path
+from msbase.utils import getenv
+from path import Path # pip install path # pylint: disable=import-error
 
 def prepare_insert_query(row_dict, table, ignore_dup = False):
     row_items = list(row_dict.items())

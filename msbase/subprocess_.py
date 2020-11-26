@@ -2,10 +2,7 @@ import subprocess
 import os
 import sys
 import traceback
-import glob
-from os.path import join
 from multiprocessing import Pool, Value
-import multiprocessing
 import time
 from termcolor import cprint
 from threading import Thread
@@ -32,7 +29,7 @@ def enqueue_output(out, queue):
 def call_std(args, cwd=None, env={}, output=True, timeout_s=None):
     if output:
         p = subprocess.Popen(args, stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, bufsize=1,
+                             stderr=subprocess.PIPE, bufsize=0, # Why 0: https://github.com/benoitc/gunicorn/pull/2146
                              close_fds=ON_POSIX, cwd=cwd, env=dict(os.environ, **env))
         start_time = time.time()
         stdout = ""

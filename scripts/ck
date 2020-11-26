@@ -47,7 +47,8 @@ if __name__ == "__main__":
     unknowns = []
 
     try:
-        l = pickle.load(open("/tmp/ckdb", "rb"))
+        with open("/tmp/ckdb", "rb") as fh:
+            l = pickle.load(fh)
     except IOError:
         l = []
     db = dict(l)
@@ -56,14 +57,15 @@ if __name__ == "__main__":
 
     for pat in sys.argv[1:]:
         for f in glob.glob(pat):
-            checksum = hashlib.md5(open(f).read().encode('utf-8')).hexdigest()
-            if db.get(f, None) == checksum:
-                logger.info(f + " is not modified")
-                continue
-            if is_py(f):
-                files_to_check.append(f)
-            else:
-                unknowns.append(f)
+            with open(f) as fh:
+                checksum = hashlib.md5(fh.read().encode('utf-8')).hexdigest()
+                if db.get(f, None) == checksum:
+                    logger.info(f + " is not modified")
+                    continue
+                if is_py(f):
+                    files_to_check.append(f)
+                else:
+                    unknowns.append(f)
 
     for f in unknowns:
         logger.warn("[ck] ❓ Ignoring unknown extension: " + f)
@@ -83,7 +85,8 @@ if __name__ == "__main__":
     for f in failed:
         logger.error("[ck] ❌ Failed: " + f)
 
-    pickle.dump(list(db.items()), open("/tmp/ckdb", "wb"))
+    with open("/tmp/ckdb", "wb") as fh:
+        pickle.dump(list(db.items()), fh)
 
     if len(failed):
         exit(-1)
