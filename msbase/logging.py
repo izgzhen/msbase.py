@@ -9,15 +9,20 @@ logging_levels = { "DEBUG" : logging.DEBUG
                  , "ERROR" : logging.ERROR
                  , "CRITICAL" : logging.CRITICAL }
 
-level = logging.INFO
-PYLOG = os.getenv("PYLOG")
-if PYLOG is not None:
-    level = logging_levels[PYLOG]
+def get_logger(name: str, level = logging.INFO):
+    PYLOG = os.getenv("PYLOG")
+    if PYLOG is not None:
+        level = logging_levels[PYLOG]
 
-logger = logging.getLogger()
-handler = logging.StreamHandler()
-formatter = logging.Formatter(
-    '%(asctime)s %(funcName)-11s %(levelname)-8s %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
-logger.setLevel(level)
+    logger = logging.getLogger()
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        '%(asctime)s %(funcName)-11s %(levelname)-8s %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    print(f"Set logger({name}) level={level}")
+    logger.setLevel(level)
+    assert logger.level == level
+    return logger
+
+logger = get_logger("default")
